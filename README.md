@@ -1,4 +1,4 @@
-##SPRING BOOT - ECOMMERCE WEB APP
+### SPRING BOOT - ECOMMERCE WEB APP
 
 This project an ecommerce web app
 The backend is powered by powered bt JAVA using the spring boot framework
