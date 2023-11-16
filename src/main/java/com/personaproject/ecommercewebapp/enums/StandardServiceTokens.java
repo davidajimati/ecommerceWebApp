@@ -1,11 +1,11 @@
 package com.personaproject.ecommercewebapp.enums;
 
-public enum StandardServiceTokens {
-    categoryToken("48298WEF2U97U3923"),
-    loginToken("62GO3D6NG26FGM2"),
-    productToken("4829FGUHKJAEC78923"),
-    authToken("IBWHEBFWEYB62938983JWENFOWE");
+import org.springframework.stereotype.Service;
 
-    StandardServiceTokens(String s) {
-    }
+@Service
+public class StandardServiceTokens {
+    public static final String categoryToken = "48298WEF2U97U3923";
+    public static final String loginToken = "62GO3D6NG26FGM2";
+    public static final  String productToken = "4829FGUHKJAEC78923";
+    public static final String authToken = "IBWHEBFWEYB62938983JWENFOWE";
 }
