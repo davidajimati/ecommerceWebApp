@@ -39,4 +39,10 @@ public class CategoryService {
         categoryRepo.save(categoryItem);
         return ("Category with ID " + categoryId + " updated!");
     }
+
+    public String removeCategory(Long categoryId) {
+        categoryRepo.deleteById(categoryId);
+//        categoryRepo.save(categoryItem);
+        return ("Category with ID " + categoryId + " deleted!");
+    }
 }

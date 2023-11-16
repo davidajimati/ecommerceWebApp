@@ -43,4 +43,9 @@ public class CategoryController {
                                  @RequestBody CategoryDTO categoryDTO) {
         return categoryService.updateCategory(categoryId, categoryDTO);
     }
+
+    @PostMapping("/delete/{categoryId}")
+    public String deleteCategory(@PathVariable Long categoryId) {
+        return (categoryService.removeCategory(categoryId));
+    }
 }
