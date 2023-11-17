@@ -13,9 +13,6 @@ public class HandleAuthentication {
 
     public boolean authenticateCategoryJob(String authToken, String serviceToken) {
 
-        System.out.println(standardServiceTokens.categoryToken);
-        System.out.println(standardServiceTokens.authToken);
-
         return Objects.equals(serviceToken, standardServiceTokens.categoryToken)
                 || Objects.equals(authToken, standardServiceTokens.authToken);
     }
