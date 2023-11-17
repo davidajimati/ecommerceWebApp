@@ -1,11 +1,13 @@
 package com.personaproject.ecommercewebapp.services;
 
+import com.personaproject.ecommercewebapp.common.ResponseServices;
 import com.personaproject.ecommercewebapp.dtos.CategoryDTO;
 import com.personaproject.ecommercewebapp.entity.Category;
 import com.personaproject.ecommercewebapp.repository.CategoryRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -52,5 +54,10 @@ public class CategoryService {
     public Object removeCategory(Long categoryId) {
         categoryRepo.deleteById(categoryId);
         return responseServices.apiResponse(HttpStatus.OK, true, "Category with ID " + categoryId + " deleted!");
+    }
+
+    public Object removeAllCategory() {
+        categoryRepo.deleteAll();
+        return responseServices.apiResponse(HttpStatus.OK, true, "All categories deleted");
     }
 }

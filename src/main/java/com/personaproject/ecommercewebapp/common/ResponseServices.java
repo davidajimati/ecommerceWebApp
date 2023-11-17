@@ -1,4 +1,4 @@
-package com.personaproject.ecommercewebapp.services;
+package com.personaproject.ecommercewebapp.common;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

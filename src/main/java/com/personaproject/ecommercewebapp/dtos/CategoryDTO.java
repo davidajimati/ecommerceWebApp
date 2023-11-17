@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-@Table(name = "category")
 public class CategoryDTO {
 
     private @NotEmpty String categoryName;

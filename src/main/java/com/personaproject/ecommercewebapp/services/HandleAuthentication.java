@@ -11,9 +11,17 @@ import java.util.Objects;
 public class HandleAuthentication {
     private final StandardServiceTokens standardServiceTokens;
 
-    public boolean authenticateCategoryCreation(String authToken, String serviceToken) {
+    public boolean authenticateCategoryJob(String authToken, String serviceToken) {
+
+        System.out.println(standardServiceTokens.categoryToken);
+        System.out.println(standardServiceTokens.authToken);
 
         return Objects.equals(serviceToken, standardServiceTokens.categoryToken)
+                || Objects.equals(authToken, standardServiceTokens.authToken);
+    }
+    public boolean authenticateProductJob(String authToken, String serviceToken) {
+
+        return Objects.equals(serviceToken, standardServiceTokens.productToken)
                 || Objects.equals(authToken, standardServiceTokens.authToken);
     }
 }
