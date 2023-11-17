@@ -1,4 +1,4 @@
-package com.personaproject.ecommercewebapp.enums;
+package com.personaproject.ecommercewebapp.globalVariables;
 
 public enum ResponseMessages {
 
