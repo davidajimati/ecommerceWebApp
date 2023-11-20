@@ -19,8 +19,10 @@ public class Product {
     private String productDescription;
 
     @Column(name = "category_id")
-    private Double categoryId;
+    private long categoryId;
 
     @Column(name = "image_url")
     private String imageUrl;
+
+    private Double price;
 }

@@ -4,6 +4,7 @@ import com.personaproject.ecommercewebapp.common.ResponseServices;
 import com.personaproject.ecommercewebapp.dtos.ProductDTO;
 import com.personaproject.ecommercewebapp.entity.Category;
 import com.personaproject.ecommercewebapp.entity.Product;
+import com.personaproject.ecommercewebapp.repository.CategoryRepo;
 import com.personaproject.ecommercewebapp.services.HandleAuthentication;
 import com.personaproject.ecommercewebapp.services.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -21,25 +22,33 @@ public class ProductController {
     private final ResponseServices responseServices;
     private final HandleAuthentication handleAuthentication;
     private final ProductService productService;
+    private final CategoryRepo categoryRepo;
 
     @PostMapping("/create")
     public Object createProduct(@RequestHeader String serviceToken,
                                 @RequestHeader String authToken,
                                 @RequestBody ProductDTO productDTO) {
-        if (handleAuthentication.authenticateProductJob(authToken, serviceToken))
-            return productService.createProduct(productDTO);
+        if (!handleAuthentication.authenticateProductJob(authToken, serviceToken))
+            return responseServices.apiResponse(HttpStatus.BAD_REQUEST,
+                    false, "Token(s) cannot be validated");
 
-        return responseServices.apiResponse(HttpStatus.EXPECTATION_FAILED,
-                false, "Token(s) cannot be validated");
+        Optional<Category> optionalCategory = categoryRepo.findById(productDTO.getCategoryId());
+        if (optionalCategory.isPresent()) return productService.createProduct(productDTO);
+        return responseServices.apiResponse(HttpStatus.BAD_REQUEST, false, "category does not exist");
     }
 
     @GetMapping("/get_all")
-    public List<Product> getAllProducts() {
+    public List<ProductDTO> getAllProducts() {
         return productService.listAll();
     }
 
+    @GetMapping("/get_all_dev")
+    public List<Product> devGetAllProducts() {
+        return productService.devListAllProducts();
+    }
+
     @GetMapping("/get/{productId}")
-    public Optional<Product> getById(@PathVariable Long productId) {
+    public ProductDTO getById(@PathVariable Long productId) {
         return productService.findProductByID(productId);
     }
 

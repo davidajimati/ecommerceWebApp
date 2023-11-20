@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -33,12 +34,30 @@ public class CategoryService {
         }
     }
 
-    public List<Category> listAllCategories() {
-        return categoryRepo.findAll();
+    private CategoryDTO getCategoryDTO(Category category) {
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setCategoryName(category.getCategoryName());
+        categoryDTO.setDescription(category.getCategoryDescription());
+        categoryDTO.setImageUrl(category.getCategoryImageUrl());
+        return categoryDTO;
     }
 
-    public Optional<Category> findByID(Long categoryId) {
-        return categoryRepo.findById(categoryId);
+    public List<CategoryDTO> listAllCategories() {
+        List<Category> categories = categoryRepo.findAll();
+
+        ArrayList<CategoryDTO> allCategories = new ArrayList<>();
+
+        for (Category category : categories) allCategories.add(getCategoryDTO(category));
+        return allCategories;
+    }
+
+    public CategoryDTO findByID(Long categoryId) {
+        CategoryDTO category = null;
+        Optional<Category> dbCategory = categoryRepo.findById(categoryId);
+        if(dbCategory.isPresent()) {
+             category = getCategoryDTO(dbCategory.get());
+        }
+        return category;
     }
 
     public Object updateCategory(Long categoryId, CategoryDTO categoryDTO) {
@@ -63,5 +82,9 @@ public class CategoryService {
     public Object removeAllCategory() {
         categoryRepo.deleteAll();
         return responseServices.apiResponse(HttpStatus.OK, true, "All categories deleted");
+    }
+
+    public List<Category> devListAllCategories() {
+        return categoryRepo.findAll();
     }
 }

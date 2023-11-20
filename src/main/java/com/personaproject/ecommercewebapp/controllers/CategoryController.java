@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,12 +30,17 @@ public class CategoryController {
     }
 
     @GetMapping("/get_all")
-    public List<Category> categoryList() {
+    public List<CategoryDTO> categoryList() {
         return categoryService.listAllCategories();
     }
 
+    @GetMapping("/get_all_dev")
+    public List<Category> devCategoryList() {
+        return categoryService.devListAllCategories();
+    }
+
     @GetMapping("/get/{categoryId}")
-    public Optional<Category> getById(@PathVariable Long categoryId) {
+    public CategoryDTO getById(@PathVariable Long categoryId) {
         return categoryService.findByID(categoryId);
     }
 

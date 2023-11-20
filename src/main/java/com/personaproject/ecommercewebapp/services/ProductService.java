@@ -2,6 +2,7 @@ package com.personaproject.ecommercewebapp.services;
 
 import com.personaproject.ecommercewebapp.common.ResponseServices;
 import com.personaproject.ecommercewebapp.dtos.ProductDTO;
+import com.personaproject.ecommercewebapp.entity.Category;
 import com.personaproject.ecommercewebapp.entity.Product;
 import com.personaproject.ecommercewebapp.repository.ProductRepo;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +29,7 @@ public class ProductService {
             product.setProductName(productDTO.getProductName());
             product.setImageUrl(productDTO.getImageUrl());
             product.setCategoryId(productDTO.getCategoryId());
+            product.setPrice(productDTO.getPrice());
 
             productRepo.save(product);
             return responseServices.apiResponse(HttpStatus.CREATED, true, "Product added!");
@@ -35,8 +38,24 @@ public class ProductService {
         }
     }
 
-    public List<Product> listAll() {
-        return (productRepo.findAll());
+    private ProductDTO getProductDTO(Product product) {
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setProductDescription(product.getProductDescription());
+        productDTO.setProductName(product.getProductName());
+        productDTO.setPrice(product.getPrice());
+        productDTO.setImageUrl(product.getImageUrl());
+        productDTO.setCategoryId(product.getCategoryId());
+        return productDTO;
+    }
+
+    public List<ProductDTO> listAll() {
+        List<ProductDTO> productList = new ArrayList<>();
+        List<Product> rawProductList = productRepo.findAll();
+
+        for(Product product: rawProductList) {
+            productList.add(getProductDTO(product));
+        }
+        return productList;
     }
 
     public Object updateProduct(Long productId, ProductDTO productDTO) {
@@ -54,8 +73,8 @@ public class ProductService {
     }
 
     @GetMapping("/get/productId")
-    public Optional<Product> findProductByID(@PathVariable Long productId) {
-        return productRepo.findById(productId);
+    public ProductDTO findProductByID(@PathVariable Long productId) {
+        return getProductDTO(productRepo.findById(productId).get());
     }
 
     public Object deleteProduct(Long productId) {
@@ -66,5 +85,9 @@ public class ProductService {
     public Object deleteAllProducts() {
         productRepo.deleteAll();
         return responseServices.apiResponse(HttpStatus.OK, true, "All products deleted");
+    }
+
+    public List<Product> devListAllProducts() {
+        return productRepo.findAll();
     }
 }
