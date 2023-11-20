@@ -2,18 +2,16 @@ package com.personaproject.ecommercewebapp.services;
 
 import com.personaproject.ecommercewebapp.common.ResponseServices;
 import com.personaproject.ecommercewebapp.dtos.ProductDTO;
-import com.personaproject.ecommercewebapp.entity.Category;
 import com.personaproject.ecommercewebapp.entity.Product;
 import com.personaproject.ecommercewebapp.repository.ProductRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +20,7 @@ public class ProductService {
     private final ResponseServices responseServices;
     private final ProductRepo productRepo;
 
-    public Object createProduct(ProductDTO productDTO) {
+    public ResponseEntity<?> createProduct(ProductDTO productDTO) {
         try {
             Product product = new Product();
             product.setProductDescription(productDTO.getProductDescription());
@@ -32,9 +30,9 @@ public class ProductService {
             product.setPrice(productDTO.getPrice());
 
             productRepo.save(product);
-            return responseServices.apiResponse(HttpStatus.CREATED, true, "Product added!");
+            return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.CREATED, "Product added!"), HttpStatus.CREATED);
         } catch (Exception e) {
-            return responseServices.apiResponse(HttpStatus.BAD_REQUEST, false, "couldn't add product to category -> {}" + e);
+            return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.UNAUTHORIZED, "couldn't add product to category -> {}" + e), HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -58,7 +56,7 @@ public class ProductService {
         return productList;
     }
 
-    public Object updateProduct(Long productId, ProductDTO productDTO) {
+    public ResponseEntity<?> updateProduct(Long productId, ProductDTO productDTO) {
         try {
             Product product = productRepo.getReferenceById(productId);
             product.setCategoryId(productDTO.getCategoryId());
@@ -66,25 +64,24 @@ public class ProductService {
             product.setImageUrl(productDTO.getImageUrl());
 
             productRepo.save(product);
-            return responseServices.apiResponse(HttpStatus.OK, true, "product with ID " + productId + " updated!");
+            return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK, "product with ID " + productId + " updated!"), HttpStatus.ACCEPTED);
         } catch (Exception e) {
-            return responseServices.apiResponse(HttpStatus.BAD_REQUEST, false, "Product cannot be updated");
+            return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.BAD_REQUEST, "Product cannot be updated"), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping("/get/productId")
     public ProductDTO findProductByID(@PathVariable Long productId) {
         return getProductDTO(productRepo.findById(productId).get());
     }
 
-    public Object deleteProduct(Long productId) {
+    public ResponseEntity<?> deleteProduct(Long productId) {
         productRepo.deleteById(productId);
-        return responseServices.apiResponse(HttpStatus.OK, true, "product with ID " + productId + " has been deleted!");
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK, "product with ID " + productId + " has been deleted!"), HttpStatus.OK);
     }
 
-    public Object deleteAllProducts() {
+    public ResponseEntity<?> deleteAllProducts() {
         productRepo.deleteAll();
-        return responseServices.apiResponse(HttpStatus.OK, true, "All products deleted");
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK, "All products deleted"), HttpStatus.OK);
     }
 
     public List<Product> devListAllProducts() {

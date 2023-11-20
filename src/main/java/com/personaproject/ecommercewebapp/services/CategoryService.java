@@ -6,10 +6,10 @@ import com.personaproject.ecommercewebapp.entity.Category;
 import com.personaproject.ecommercewebapp.repository.CategoryRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +20,7 @@ public class CategoryService {
     private final ResponseServices responseServices;
     private final CategoryRepo categoryRepo;
 
-    public HashMap<String, Object> createCategory(CategoryDTO categoryDTO) {
+    public ResponseEntity<?> createCategory(CategoryDTO categoryDTO) {
         try {
             Category category = new Category();
             category.setCategoryName(categoryDTO.getCategoryName());
@@ -28,9 +28,11 @@ public class CategoryService {
             category.setCategoryImageUrl(categoryDTO.getImageUrl());
 
             categoryRepo.save(category);
-            return responseServices.apiResponse(HttpStatus.CREATED, true, "Category created successfully");
+            return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.CREATED, "Category created successfully"), HttpStatus.CREATED);
+//            return responseServices.apiResponse(HttpStatus.CREATED, true, "Category created successfully");
         } catch (Exception e) {
-            return responseServices.apiResponse(HttpStatus.BAD_REQUEST, false, "category not created");
+//            return responseServices.apiResponse(HttpStatus.BAD_REQUEST, false, "category not created");
+            return new ResponseEntity<>("Category not created", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -60,28 +62,31 @@ public class CategoryService {
         return category;
     }
 
-    public Object updateCategory(Long categoryId, CategoryDTO categoryDTO) {
+    public ResponseEntity<?> updateCategory(Long categoryId, CategoryDTO categoryDTO) {
         try {
             Category categoryItem = categoryRepo.getReferenceById(categoryId);
             categoryItem.setCategoryDescription(categoryDTO.getDescription());
             categoryItem.setCategoryName(categoryDTO.getCategoryName());
             categoryItem.setCategoryImageUrl(categoryDTO.getImageUrl());
             categoryRepo.save(categoryItem);
-            return responseServices.apiResponse(HttpStatus.ACCEPTED, true,
-                    "Category with ID " + categoryId + " updated!");
+            return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.ACCEPTED,
+                    "Category with ID " + categoryId + " updated!"), HttpStatus.ACCEPTED);
         } catch (Exception e) {
-            return responseServices.apiResponse(HttpStatus.BAD_REQUEST, false, "Category cannot be updated");
+            return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.BAD_REQUEST,
+                    "Category cannot be updated"), HttpStatus.BAD_REQUEST);
         }
     }
 
-    public Object removeCategory(Long categoryId) {
+    public ResponseEntity<?> removeCategory(Long categoryId) {
         categoryRepo.deleteById(categoryId);
-        return responseServices.apiResponse(HttpStatus.OK, true, "Category with ID " + categoryId + " deleted!");
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK,
+                "Category with ID " + categoryId + " deleted!"), HttpStatus.BAD_REQUEST);
     }
 
     public Object removeAllCategory() {
         categoryRepo.deleteAll();
-        return responseServices.apiResponse(HttpStatus.OK, true, "All categories deleted");
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK,
+                "All categories deleted"), HttpStatus.OK);
     }
 
     public List<Category> devListAllCategories() {

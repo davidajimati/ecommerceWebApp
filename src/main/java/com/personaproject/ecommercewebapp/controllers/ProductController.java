@@ -9,6 +9,7 @@ import com.personaproject.ecommercewebapp.services.HandleAuthentication;
 import com.personaproject.ecommercewebapp.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,16 +26,18 @@ public class ProductController {
     private final CategoryRepo categoryRepo;
 
     @PostMapping("/create")
-    public Object createProduct(@RequestHeader String serviceToken,
+    public ResponseEntity<?> createProduct(@RequestHeader String serviceToken,
                                 @RequestHeader String authToken,
                                 @RequestBody ProductDTO productDTO) {
         if (!handleAuthentication.authenticateProductJob(authToken, serviceToken))
-            return responseServices.apiResponse(HttpStatus.BAD_REQUEST,
-                    false, "Token(s) cannot be validated");
+            return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.BAD_REQUEST,
+                    "Token(s) cannot be validated"), HttpStatus.BAD_REQUEST);
 
         Optional<Category> optionalCategory = categoryRepo.findById(productDTO.getCategoryId());
-        if (optionalCategory.isPresent()) return productService.createProduct(productDTO);
-        return responseServices.apiResponse(HttpStatus.BAD_REQUEST, false, "category does not exist");
+        if (optionalCategory.isPresent())
+            return new ResponseEntity<>(productService.createProduct(productDTO), HttpStatus.CREATED);
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.UNAUTHORIZED,
+                "category does not exist"), HttpStatus.UNAUTHORIZED);
     }
 
     @GetMapping("/get_all")
@@ -53,27 +56,27 @@ public class ProductController {
     }
 
     @PutMapping("/update_product/{productId}")
-    public Object updateProduct(@PathVariable Long productId,
-                                @RequestBody ProductDTO productDTO,
-                                @RequestHeader String serviceToken,
-                                @RequestHeader String authToken) {
+    public ResponseEntity<?> updateProduct(@PathVariable Long productId,
+                                           @RequestBody ProductDTO productDTO,
+                                           @RequestHeader String serviceToken,
+                                           @RequestHeader String authToken) {
         if (handleAuthentication.authenticateProductJob(authToken, serviceToken))
-            return productService.updateProduct(productId, productDTO);
-        return responseServices.apiResponse(HttpStatus.EXPECTATION_FAILED, false,
-                "Token(s) cannot be validated");
+            return new ResponseEntity<>(productService.updateProduct(productId, productDTO), HttpStatus.OK);
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.EXPECTATION_FAILED,
+                "Token(s) cannot be validated"), HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping("/delete_all")
-    public Object deleteAllProducts(@RequestHeader String authToken,
+    public ResponseEntity<?> deleteAllProducts(@RequestHeader String authToken,
                                     @RequestHeader String serviceToken) {
         if (handleAuthentication.authenticateProductJob(authToken, serviceToken))
-            return productService.deleteAllProducts();
-        return responseServices.apiResponse(HttpStatus.EXPECTATION_FAILED,
-                false, "Token(s) cannot be validated");
+            return new ResponseEntity<>(productService.deleteAllProducts(), HttpStatus.OK);
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.EXPECTATION_FAILED,
+                "Token(s) cannot be validated"), HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping("/delete/{product_id}")
-    public Object deleteProduct(@PathVariable Long productId) {
-        return productService.deleteProduct(productId);
+    public ResponseEntity deleteProduct(@PathVariable Long productId) {
+        return new ResponseEntity<>(productService.deleteProduct(productId), HttpStatus.OK);
     }
 }

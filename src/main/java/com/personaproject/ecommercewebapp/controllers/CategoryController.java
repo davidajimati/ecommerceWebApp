@@ -2,14 +2,12 @@ package com.personaproject.ecommercewebapp.controllers;
 
 import com.personaproject.ecommercewebapp.common.ResponseServices;
 import com.personaproject.ecommercewebapp.dtos.CategoryDTO;
-import com.personaproject.ecommercewebapp.entity.Category;
 import com.personaproject.ecommercewebapp.services.CategoryService;
 import com.personaproject.ecommercewebapp.services.HandleAuthentication;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,22 +19,23 @@ public class CategoryController {
     private final ResponseServices responseServices;
 
     @PostMapping("/create")
-    public Object createNewCategory(@RequestBody CategoryDTO categoryDTO,
-                                    @RequestHeader String serviceToken,
-                                    @RequestHeader String authToken) {
+    public ResponseEntity<?> createNewCategory(@RequestBody CategoryDTO categoryDTO,
+                                               @RequestHeader String serviceToken,
+                                               @RequestHeader String authToken) {
         if (handleAuthentication.authenticateCategoryJob(authToken, serviceToken))
             return categoryService.createCategory(categoryDTO);
-        return responseServices.apiResponse(HttpStatus.BAD_REQUEST, false, "Token(s) cannot be validated");
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.BAD_REQUEST,
+                "Token(s) cannot be validated"), HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/get_all")
-    public List<CategoryDTO> categoryList() {
-        return categoryService.listAllCategories();
+    public ResponseEntity<?> categoryList() {
+        return new ResponseEntity<>(categoryService.listAllCategories(), HttpStatus.OK);
     }
 
     @GetMapping("/get_all_dev")
-    public List<Category> devCategoryList() {
-        return categoryService.devListAllCategories();
+    public ResponseEntity<?> devCategoryList() {
+        return new ResponseEntity<>(categoryService.devListAllCategories(), HttpStatus.OK);
     }
 
     @GetMapping("/get/{categoryId}")
@@ -45,30 +44,30 @@ public class CategoryController {
     }
 
     @PutMapping("/update/{categoryId}")
-    public Object updateCategory(@PathVariable Long categoryId,
+    public ResponseEntity<?> updateCategory(@PathVariable Long categoryId,
                                  @RequestBody CategoryDTO categoryDTO) {
-        return categoryService.updateCategory(categoryId, categoryDTO);
+        return new ResponseEntity<>(categoryService.updateCategory(categoryId, categoryDTO), HttpStatus.ACCEPTED);
     }
 
     @DeleteMapping("/delete/{categoryId}")
-    public Object deleteCategory(@PathVariable Long categoryId,
+    public ResponseEntity<?> deleteCategory(@PathVariable Long categoryId,
                                  @RequestHeader String serviceToken,
                                  @RequestHeader String authToken) {
         try {
             if (handleAuthentication.authenticateProductJob(authToken, serviceToken))
-                return (categoryService.removeCategory(categoryId));
-            return responseServices.apiResponse(HttpStatus.BAD_REQUEST,
-                    false, "Category with ID " + categoryId + " Cannot be deleted");
+                return new ResponseEntity<>(categoryService.removeCategory(categoryId), HttpStatus.OK);
+            return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.BAD_REQUEST, "Category with ID " + categoryId + " Cannot be deleted"), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            return ("Token(s) cannot be verified");
+            return new ResponseEntity<>("Token(s) cannot be verified", HttpStatus.BAD_REQUEST);
         }
     }
 
     @DeleteMapping("/delete_all")
-    public Object deleteAllCategory(@RequestHeader String authToken,
+    public ResponseEntity<?> deleteAllCategory(@RequestHeader String authToken,
                                     @RequestHeader String serviceToken) {
         if (handleAuthentication.authenticateCategoryJob(authToken, serviceToken))
-            return categoryService.removeAllCategory();
-        return responseServices.apiResponse(HttpStatus.BAD_REQUEST, false, "Token(s) cannot be validated");
+            return new ResponseEntity<>(categoryService.removeAllCategory(), HttpStatus.OK);
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.BAD_REQUEST,
+                "Token(s) cannot be validated"), HttpStatus.BAD_REQUEST);
     }
 }
