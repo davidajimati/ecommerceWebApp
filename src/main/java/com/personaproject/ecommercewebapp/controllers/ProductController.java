@@ -2,6 +2,7 @@ package com.personaproject.ecommercewebapp.controllers;
 
 import com.personaproject.ecommercewebapp.common.ResponseServices;
 import com.personaproject.ecommercewebapp.dtos.ProductDTO;
+import com.personaproject.ecommercewebapp.entity.Category;
 import com.personaproject.ecommercewebapp.entity.Product;
 import com.personaproject.ecommercewebapp.services.HandleAuthentication;
 import com.personaproject.ecommercewebapp.services.ProductService;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,6 +36,11 @@ public class ProductController {
     @GetMapping("/get_all")
     public List<Product> getAllProducts() {
         return productService.listAll();
+    }
+
+    @GetMapping("/get/{productId}")
+    public Optional<Product> getById(@PathVariable Long productId) {
+        return productService.findProductByID(productId);
     }
 
     @PutMapping("/update_product/{productId}")

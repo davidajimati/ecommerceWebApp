@@ -7,10 +7,10 @@ import com.personaproject.ecommercewebapp.repository.CategoryRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +35,10 @@ public class CategoryService {
 
     public List<Category> listAllCategories() {
         return categoryRepo.findAll();
+    }
+
+    public Optional<Category> findByID(Long categoryId) {
+        return categoryRepo.findById(categoryId);
     }
 
     public Object updateCategory(Long categoryId, CategoryDTO categoryDTO) {

@@ -7,8 +7,11 @@ import com.personaproject.ecommercewebapp.repository.ProductRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +51,11 @@ public class ProductService {
         } catch (Exception e) {
             return responseServices.apiResponse(HttpStatus.BAD_REQUEST, false, "Product cannot be updated");
         }
+    }
+
+    @GetMapping("/get/productId")
+    public Optional<Product> findProductByID(@PathVariable Long productId) {
+        return productRepo.findById(productId);
     }
 
     public Object deleteProduct(Long productId) {

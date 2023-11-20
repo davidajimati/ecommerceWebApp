@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,6 +33,11 @@ public class CategoryController {
     @GetMapping("/get_all")
     public List<Category> categoryList() {
         return categoryService.listAllCategories();
+    }
+
+    @GetMapping("/get/{categoryId}")
+    public Optional<Category> getById(@PathVariable Long categoryId) {
+        return categoryService.findByID(categoryId);
     }
 
     @PutMapping("/update/{categoryId}")
