@@ -3,6 +3,8 @@ package com.personaproject.ecommercewebapp.services;
 import com.personaproject.ecommercewebapp.common.ResponseServices;
 import com.personaproject.ecommercewebapp.dtos.ProductDTO;
 import com.personaproject.ecommercewebapp.entity.Product;
+import com.personaproject.ecommercewebapp.execeptions.customExceptions.CategoryNotFoundException;
+import com.personaproject.ecommercewebapp.execeptions.customExceptions.ProductNotFoundException;
 import com.personaproject.ecommercewebapp.repository.ProductRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,21 +22,21 @@ public class ProductService {
 
     private final ResponseServices responseServices;
     private final ProductRepo productRepo;
+    private final CategoryService categoryService;
 
     public ResponseEntity<?> createProduct(ProductDTO productDTO) {
-        try {
-            Product product = new Product();
-            product.setProductDescription(productDTO.getProductDescription());
-            product.setProductName(productDTO.getProductName());
-            product.setImageUrl(productDTO.getImageUrl());
-            product.setCategoryId(productDTO.getCategoryId());
-            product.setPrice(productDTO.getPrice());
+        categoryService.checkIfCategoryExists(productDTO.getCategoryId());
 
-            productRepo.save(product);
-            return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.CREATED, "Product added!"), HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.UNAUTHORIZED, "couldn't add product to category -> {}" + e), HttpStatus.UNAUTHORIZED);
-        }
+        Product product = new Product();
+        product.setProductDescription(productDTO.getProductDescription());
+        product.setProductName(productDTO.getProductName());
+        product.setImageUrl(productDTO.getImageUrl());
+        product.setCategoryId(productDTO.getCategoryId());
+        product.setPrice(productDTO.getPrice());
+        productRepo.save(product);
+
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.CREATED,
+                "Product added to category with ID" + productDTO.getCategoryId()), HttpStatus.CREATED);
     }
 
     private ProductDTO getProductDTO(Product product) {
@@ -46,8 +49,20 @@ public class ProductService {
         return productDTO;
     }
 
+    public ProductDTO findProductByID(@PathVariable Long productId) {
+        Optional<Product> product = productRepo.findById(productId);
+
+        if (product.isPresent()) return getProductDTO(product.get());
+        throw new ProductNotFoundException("Product with ID " + productId + " cannot be found");
+    }
+
+    public void checkIfProductExists(Long productId) {
+        if (findProductByID(productId) == null)
+            throw new CategoryNotFoundException("Product with ID " + productId + " Cannot be found");
+    }
+
     public List<ProductDTO> listAll() {
-        List<ProductDTO> productList = new ArrayList<>();
+        ArrayList<ProductDTO> productList = new ArrayList<>();
         List<Product> rawProductList = productRepo.findAll();
 
         for(Product product: rawProductList) {
@@ -57,31 +72,30 @@ public class ProductService {
     }
 
     public ResponseEntity<?> updateProduct(Long productId, ProductDTO productDTO) {
-        try {
-            Product product = productRepo.getReferenceById(productId);
-            product.setCategoryId(productDTO.getCategoryId());
-            product.setProductName(productDTO.getProductName());
-            product.setImageUrl(productDTO.getImageUrl());
+        checkIfProductExists(productId);
 
-            productRepo.save(product);
-            return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK, "product with ID " + productId + " updated!"), HttpStatus.ACCEPTED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.BAD_REQUEST, "Product cannot be updated"), HttpStatus.BAD_REQUEST);
-        }
+        Product product = productRepo.getReferenceById(productId);
+        product.setCategoryId(productDTO.getCategoryId());
+        product.setProductName(productDTO.getProductName());
+        product.setImageUrl(productDTO.getImageUrl());
+
+        productRepo.save(product);
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK,
+                "product with ID " + productId + " updated!"), HttpStatus.ACCEPTED);
     }
 
-    public ProductDTO findProductByID(@PathVariable Long productId) {
-        return getProductDTO(productRepo.findById(productId).get());
-    }
 
     public ResponseEntity<?> deleteProduct(Long productId) {
+        checkIfProductExists(productId);
         productRepo.deleteById(productId);
-        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK, "product with ID " + productId + " has been deleted!"), HttpStatus.OK);
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK,
+                "product with ID " + productId + " has been deleted!"), HttpStatus.OK);
     }
 
     public ResponseEntity<?> deleteAllProducts() {
         productRepo.deleteAll();
-        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK, "All products deleted"), HttpStatus.OK);
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK,
+                "All products deleted"), HttpStatus.OK);
     }
 
     public List<Product> devListAllProducts() {

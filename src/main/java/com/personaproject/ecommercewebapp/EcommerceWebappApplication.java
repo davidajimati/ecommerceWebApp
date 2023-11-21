@@ -13,7 +13,6 @@ public class EcommerceWebappApplication {
 		System.out.println("\t APPLICATION STARTED");
 		System.out.println("\t\t|");
 		System.out.println("\t\t|");
-		System.out.println("\t\t\\/");
 	}
 
 }

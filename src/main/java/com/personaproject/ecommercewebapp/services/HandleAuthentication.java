@@ -1,5 +1,6 @@
 package com.personaproject.ecommercewebapp.services;
 
+import com.personaproject.ecommercewebapp.execeptions.customExceptions.UnverifiableTokenException;
 import com.personaproject.ecommercewebapp.globalVariables.StandardServiceTokens;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,14 +12,17 @@ import java.util.Objects;
 public class HandleAuthentication {
     private final StandardServiceTokens standardServiceTokens;
 
-    public boolean authenticateCategoryJob(String authToken, String serviceToken) {
+    public boolean authenticateCategoryJob(String authToken, String serviceToken) throws UnverifiableTokenException {
 
-        return Objects.equals(serviceToken, standardServiceTokens.categoryToken)
-                || Objects.equals(authToken, standardServiceTokens.authToken);
+        if (!Objects.equals(serviceToken, standardServiceTokens.categoryToken) ||
+                !Objects.equals(authToken, standardServiceTokens.authToken))
+            throw new UnverifiableTokenException("Header token(s) cannot be authenticated");
+        return true;
     }
     public boolean authenticateProductJob(String authToken, String serviceToken) {
-
-        return Objects.equals(serviceToken, standardServiceTokens.productToken)
-                || Objects.equals(authToken, standardServiceTokens.authToken);
+        if (!Objects.equals(serviceToken, standardServiceTokens.productToken) ||
+                !Objects.equals(authToken, standardServiceTokens.authToken))
+            throw new UnverifiableTokenException("Header token(s) cannot be authenticated");
+        return true;
     }
 }
