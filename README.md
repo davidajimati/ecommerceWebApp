@@ -12,3 +12,4 @@ This web app contains the following features:
 - Integration with Database (SQL)
 - Wishlist
 
+access the swagger UI interface to interact with the APIs here: http://localhost:8080/swagger-ui/index.html
