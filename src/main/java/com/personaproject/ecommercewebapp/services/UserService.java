@@ -1,8 +1,12 @@
 package com.personaproject.ecommercewebapp.services;
 
-import com.personaproject.ecommercewebapp.dtos.UserSignupDTO;
+import com.personaproject.ecommercewebapp.dtos.user.SignInDTO;
+import com.personaproject.ecommercewebapp.dtos.user.SignInResponseDTO;
+import com.personaproject.ecommercewebapp.dtos.user.SignupDTO;
 import com.personaproject.ecommercewebapp.entity.AuthenticationToken;
 import com.personaproject.ecommercewebapp.entity.User;
+import com.personaproject.ecommercewebapp.execeptions.customExceptions.InvalidUserException;
+import com.personaproject.ecommercewebapp.execeptions.customExceptions.PasswordIncorrectException;
 import com.personaproject.ecommercewebapp.execeptions.customExceptions.userAlreadyExistException;
 import com.personaproject.ecommercewebapp.repository.AuthenticationRepo;
 import com.personaproject.ecommercewebapp.repository.UserRepo;
@@ -29,10 +33,11 @@ public class UserService {
 
     private final UserRepo userRepo;
     private final AuthenticationService authenticationService;
+    private final AuthenticationRepo authenticationRepo;
 
 
-    public void checkIfUserExists(String email) throws userAlreadyExistException {
-        if (userRepo.findByEmail(email) != null) throw new userAlreadyExistException("User already exists");
+    public boolean checkIfUserExists(String email) {
+        return userRepo.findByEmail(email) != null;
     }
 
     public String hashPassword(String password) throws NoSuchAlgorithmException {
@@ -43,8 +48,10 @@ public class UserService {
     }
 
     @SneakyThrows
-    public ResponseEntity<?> createUser(UserSignupDTO payload) {
-        checkIfUserExists(payload.getEmail());
+    public ResponseEntity<?> createUser(SignupDTO payload) {
+        if (checkIfUserExists(payload.getEmail())) {
+            throw new userAlreadyExistException("User Already Exists, please login instead");
+        }
         User user = new User(payload.getFirstName(), payload.getLastName(), payload.getEmail(), hashPassword(payload.getPassword()));
         userRepo.save(user);
 
@@ -52,5 +59,22 @@ public class UserService {
         authenticationService.saveToken(authenticationToken);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("User '" + payload.getFirstName() + "' created successfully");
+    }
+
+    @SneakyThrows
+    public SignInResponseDTO handleSignIn(SignInDTO payload) throws PasswordIncorrectException, InvalidUserException {
+        // find user via email to be sure it exists
+        if (!checkIfUserExists(payload.getEmail()))
+            throw new InvalidUserException("User doesn't exist, consider signing up instead.");
+
+        User user = userRepo.findByEmail(payload.getEmail());
+        String token = "";
+        // hash the password and compare if it's equal
+        if (hashPassword(payload.getPassword()).equals(user.getPassword())) {
+            // retrieve the token
+            token = authenticationRepo.findByUser(user).getToken();
+        } else throw new PasswordIncorrectException("Password incorrect, Check credentials and try again.");
+        // return the response
+        return new SignInResponseDTO("success", token);
     }
 }

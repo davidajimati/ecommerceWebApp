@@ -1,6 +1,7 @@
 package com.personaproject.ecommercewebapp.services;
 
 import com.personaproject.ecommercewebapp.entity.AuthenticationToken;
+import com.personaproject.ecommercewebapp.entity.User;
 import com.personaproject.ecommercewebapp.repository.AuthenticationRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,5 +13,9 @@ public class AuthenticationService {
 
     public void saveToken(AuthenticationToken authenticationToken) {
         authenticationRepo.save(authenticationToken);
+    }
+
+    public AuthenticationToken getToken(User user) {
+        return authenticationRepo.findByUser(user);
     }
 }

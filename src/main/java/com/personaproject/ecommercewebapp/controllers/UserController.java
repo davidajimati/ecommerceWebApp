@@ -1,6 +1,8 @@
 package com.personaproject.ecommercewebapp.controllers;
 
-import com.personaproject.ecommercewebapp.dtos.UserSignupDTO;
+import com.personaproject.ecommercewebapp.dtos.user.SignInDTO;
+import com.personaproject.ecommercewebapp.dtos.user.SignInResponseDTO;
+import com.personaproject.ecommercewebapp.dtos.user.SignupDTO;
 import com.personaproject.ecommercewebapp.services.HandleAuthentication;
 import com.personaproject.ecommercewebapp.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,12 +18,15 @@ public class UserController {
 
     // sign up endpoint
     @PostMapping("/signup")
-    ResponseEntity<?> createUser(@RequestHeader String authToken,
-            @RequestHeader String serviceToken,
-            @RequestBody UserSignupDTO userSignupDTO) {
+    public ResponseEntity<?> signUp(@RequestHeader String authToken, @RequestHeader String serviceToken,
+                             @RequestBody SignupDTO userSignupDTO) {
         handleAuthentication.authenticateSignUp(authToken, serviceToken);
         return userService.createUser(userSignupDTO);
     }
 
     // sign in endpoint
+    @PostMapping("/signin")
+    public SignInResponseDTO signIn(@RequestBody SignInDTO payload) {
+        return userService.handleSignIn(payload);
+    }
 }

@@ -1,12 +1,11 @@
-package com.personaproject.ecommercewebapp.dtos;
+package com.personaproject.ecommercewebapp.dtos.user;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 
 @AllArgsConstructor
 @Data
-public class UserSignInDTO {
+public class SignInDTO {
     private String email;
     private String password;
 }
