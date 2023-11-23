@@ -2,6 +2,7 @@ package com.personaproject.ecommercewebapp.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Entity
@@ -22,4 +23,12 @@ public class Category {
 
     @Column(name = "image_rl")
     private @NotBlank String categoryImageUrl;
+
+    public Category(String categoryName, String categoryDescription, String categoryImageUrl) {
+        this.categoryName = categoryName;
+        this.categoryDescription = categoryDescription;
+        this.categoryImageUrl = categoryImageUrl;
+    }
+
+    public Category() {}
 }

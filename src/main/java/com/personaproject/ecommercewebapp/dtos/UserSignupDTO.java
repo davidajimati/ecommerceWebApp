@@ -1,7 +1,9 @@
 package com.personaproject.ecommercewebapp.dtos;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
+@AllArgsConstructor
 @Data
 public class UserSignupDTO {
     private String firstName;

@@ -27,26 +27,15 @@ public class ProductService {
     public ResponseEntity<?> createProduct(ProductDTO productDTO) {
         categoryService.checkIfCategoryExists(productDTO.getCategoryId());
 
-        Product product = new Product();
-        product.setProductDescription(productDTO.getProductDescription());
-        product.setProductName(productDTO.getProductName());
-        product.setImageUrl(productDTO.getImageUrl());
-        product.setCategoryId(productDTO.getCategoryId());
-        product.setPrice(productDTO.getPrice());
+        Product product = new Product(productDTO.getProductName(), productDTO.getProductDescription(), productDTO.getCategoryId(), productDTO.getImageUrl(), productDTO.getPrice());
         productRepo.save(product);
 
-        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.CREATED,
-                "Product added to category with ID" + productDTO.getCategoryId()), HttpStatus.CREATED);
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.CREATED, "Product added to category with ID" + productDTO.getCategoryId()), HttpStatus.CREATED);
     }
 
     private ProductDTO getProductDTO(Product product) {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setProductDescription(product.getProductDescription());
-        productDTO.setProductName(product.getProductName());
-        productDTO.setPrice(product.getPrice());
-        productDTO.setImageUrl(product.getImageUrl());
-        productDTO.setCategoryId(product.getCategoryId());
-        return productDTO;
+        return new ProductDTO(product.getProductName(), product.getProductDescription(),
+                product.getCategoryId(), product.getImageUrl(), product.getPrice());
     }
 
     public ProductDTO findProductByID(@PathVariable Long productId) {
@@ -65,7 +54,7 @@ public class ProductService {
         ArrayList<ProductDTO> productList = new ArrayList<>();
         List<Product> rawProductList = productRepo.findAll();
 
-        for(Product product: rawProductList) {
+        for (Product product : rawProductList) {
             productList.add(getProductDTO(product));
         }
         return productList;
@@ -80,22 +69,19 @@ public class ProductService {
         product.setImageUrl(productDTO.getImageUrl());
 
         productRepo.save(product);
-        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK,
-                "product with ID " + productId + " updated!"), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK, "product with ID " + productId + " updated!"), HttpStatus.ACCEPTED);
     }
 
 
     public ResponseEntity<?> deleteProduct(Long productId) {
         checkIfProductExists(productId);
         productRepo.deleteById(productId);
-        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK,
-                "product with ID " + productId + " has been deleted!"), HttpStatus.OK);
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK, "product with ID " + productId + " has been deleted!"), HttpStatus.OK);
     }
 
     public ResponseEntity<?> deleteAllProducts() {
         productRepo.deleteAll();
-        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK,
-                "All products deleted"), HttpStatus.OK);
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK, "All products deleted"), HttpStatus.OK);
     }
 
     public List<Product> devListAllProducts() {

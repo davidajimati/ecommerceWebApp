@@ -21,22 +21,14 @@ public class CategoryService {
     private final CategoryRepo categoryRepo;
 
     public ResponseEntity<?> createCategory(CategoryDTO categoryDTO) {
-        Category category = new Category();
-        category.setCategoryName(categoryDTO.getCategoryName());
-        category.setCategoryDescription(categoryDTO.getDescription());
-        category.setCategoryImageUrl(categoryDTO.getImageUrl());
-
+        Category category = new Category(categoryDTO.getCategoryName(), categoryDTO.getDescription(), categoryDTO.getImageUrl());
         categoryRepo.save(category);
-        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.CREATED,
-                "Category created successfully"), HttpStatus.CREATED);
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.CREATED, "Category created successfully"), HttpStatus.CREATED);
     }
 
     private CategoryDTO getCategoryDTO(Category category) {
-        CategoryDTO categoryDTO = new CategoryDTO();
-        categoryDTO.setCategoryName(category.getCategoryName());
-        categoryDTO.setDescription(category.getCategoryDescription());
-        categoryDTO.setImageUrl(category.getCategoryImageUrl());
-        return categoryDTO;
+        return new CategoryDTO(category.getCategoryName(), category.getCategoryDescription(),
+                category.getCategoryImageUrl());
     }
 
     public void checkIfCategoryExists(Long categoryId) {
@@ -66,8 +58,7 @@ public class CategoryService {
         categoryItem.setCategoryName(categoryDTO.getCategoryName());
         categoryItem.setCategoryImageUrl(categoryDTO.getImageUrl());
         categoryRepo.save(categoryItem);
-        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.ACCEPTED,
-                "Category with ID " + categoryId + " updated!"), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.ACCEPTED, "Category with ID " + categoryId + " updated!"), HttpStatus.ACCEPTED);
     }
 
     public ResponseEntity<?> removeCategory(Long categoryId) throws CategoryNotFoundException {
@@ -75,14 +66,12 @@ public class CategoryService {
             throw new CategoryNotFoundException("Category with ID " + categoryId + " Cannot be found");
 
         categoryRepo.deleteById(categoryId);
-        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK,
-                "Category with ID " + categoryId + " deleted!"), HttpStatus.OK);
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK, "Category with ID " + categoryId + " deleted!"), HttpStatus.OK);
     }
 
     public Object removeAllCategory() {
         categoryRepo.deleteAll();
-        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK,
-                "All categories deleted"), HttpStatus.OK);
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.OK, "All categories deleted"), HttpStatus.OK);
     }
 
     public List<Category> devListAllCategories() {

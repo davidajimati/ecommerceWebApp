@@ -25,4 +25,14 @@ public class Product {
     private String imageUrl;
 
     private Double price;
+
+    public Product(String productName, String productDescription, long categoryId, String imageUrl, Double price) {
+        this.productName = productName;
+        this.productDescription = productDescription;
+        this.categoryId = categoryId;
+        this.imageUrl = imageUrl;
+        this.price = price;
+    }
+
+    public Product() {}
 }
