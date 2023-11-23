@@ -3,6 +3,7 @@ package com.personaproject.ecommercewebapp.execeptions;
 import com.personaproject.ecommercewebapp.execeptions.customExceptions.CategoryNotFoundException;
 import com.personaproject.ecommercewebapp.execeptions.customExceptions.UnverifiableTokenException;
 import com.personaproject.ecommercewebapp.execeptions.customExceptions.unrecognizedAuthenticationJobException;
+import com.personaproject.ecommercewebapp.execeptions.customExceptions.userAlreadyExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -32,7 +33,14 @@ public class GlobalExceptionsHandler {
     }
 
     @ExceptionHandler(value = unrecognizedAuthenticationJobException.class)
-    public ResponseEntity<?>  handleunrecognizedAuthenticationJobException(Exception exception) {
+    public ResponseEntity<?> handleunrecognizedAuthenticationJobException(Exception exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler(value = userAlreadyExistException.class)
+    public ResponseEntity<?> handleUserAlreadyExistException(Exception exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());

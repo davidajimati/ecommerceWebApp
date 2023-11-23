@@ -27,10 +27,9 @@ public class HandleAuthentication {
         return true;
     }
 
-    public boolean authenticateSignUp(String authToken, String serviceToken) throws unrecognizedAuthenticationJobException {
-        if (!Objects.equals(serviceToken, standardServiceTokens.loginToken) ||
+    public void authenticateSignUp(String authToken, String serviceToken) throws unrecognizedAuthenticationJobException {
+        if (!Objects.equals(serviceToken, standardServiceTokens.signUpToken) ||
                 !Objects.equals(authToken, standardServiceTokens.authToken))
             throw new UnverifiableTokenException("Header token(s) cannot be authenticated");
-        return true;
     }
 }
