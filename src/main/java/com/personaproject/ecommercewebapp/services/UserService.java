@@ -32,7 +32,7 @@ public class UserService {
      */
 
     private final UserRepo userRepo;
-    private final AuthenticationService authenticationService;
+    private final AuthenticationTokenService authenticationService;
     private final AuthenticationRepo authenticationRepo;
 
 
@@ -65,7 +65,7 @@ public class UserService {
     public SignInResponseDTO handleSignIn(SignInDTO payload) throws PasswordIncorrectException, InvalidUserException {
         // find user via email to be sure it exists
         if (!checkIfUserExists(payload.getEmail()))
-            throw new InvalidUserException("User doesn't exist, consider signing up instead.");
+            throw new InvalidUserException("Incorrect credentials, ensure correctness and try again.");
 
         User user = userRepo.findByEmail(payload.getEmail());
         String token = "";
@@ -73,7 +73,7 @@ public class UserService {
         if (hashPassword(payload.getPassword()).equals(user.getPassword())) {
             // retrieve the token
             token = authenticationRepo.findByUser(user).getToken();
-        } else throw new PasswordIncorrectException("Password incorrect, Check credentials and try again.");
+        } else throw new PasswordIncorrectException("Incorrect credentials, ensure correctness and try again.");
         // return the response
         return new SignInResponseDTO("success", token);
     }
