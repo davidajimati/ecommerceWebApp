@@ -1,6 +1,8 @@
 package com.personaproject.ecommercewebapp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Entity
@@ -12,27 +14,28 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
-    @Column(name = "product_name")
-    private String productName;
+    private @NotNull String productName;
+    private @NotNull String productDescription;
+    private @NotNull long categoryRefId;
+    private @NotNull String imageUrl;
 
-    @Column(name = "product_description")
-    private String productDescription;
 
-    @Column(name = "category_id")
-    private long categoryId;
+//    @ManyToOne
+//    @JsonIgnore
+//    @JoinColumn(name = "category_id")
+//    Category category;
 
-    @Column(name = "image_url")
-    private String imageUrl;
 
     private Double price;
 
-    public Product(String productName, String productDescription, long categoryId, String imageUrl, Double price) {
+    public Product(String productName, String productDescription, long categoryRefId, String imageUrl, Double price) {
         this.productName = productName;
         this.productDescription = productDescription;
-        this.categoryId = categoryId;
+        this.categoryRefId = categoryRefId;
         this.imageUrl = imageUrl;
         this.price = price;
     }
 
-    public Product() {}
+    public Product() {
+    }
 }

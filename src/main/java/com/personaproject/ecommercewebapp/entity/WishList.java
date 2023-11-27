@@ -16,18 +16,19 @@ public class WishList {
     private Integer Id;
 
     @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
-    @Column(name = "user_id")
+    @PrimaryKeyJoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(targetEntity = Product.class, fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "product_id")
-    private List<Product> product;
+    private List<Product> productList;
 
     @Column(name = "column_id")
     private Date createdDate;
 
-    public WishList(User user) {
+    public WishList(User user, Product product) {
         this.user = user;
         this.createdDate = new Date();
+        this.productList.add(product);
     }
 }

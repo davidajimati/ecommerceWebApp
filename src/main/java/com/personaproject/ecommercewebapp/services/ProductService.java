@@ -35,7 +35,7 @@ public class ProductService {
 
     private ProductDTO getProductDTO(Product product) {
         return new ProductDTO(product.getProductName(), product.getProductDescription(),
-                product.getCategoryId(), product.getImageUrl(), product.getPrice());
+                product.getCategoryRefId(), product.getImageUrl(), product.getPrice());
     }
 
     public ProductDTO findProductByID(@PathVariable Long productId) {
@@ -64,7 +64,7 @@ public class ProductService {
         checkIfProductExists(productId);
 
         Product product = productRepo.getReferenceById(productId);
-        product.setCategoryId(productDTO.getCategoryId());
+        product.setCategoryRefId(productDTO.getCategoryId());
         product.setProductName(productDTO.getProductName());
         product.setImageUrl(productDTO.getImageUrl());
 

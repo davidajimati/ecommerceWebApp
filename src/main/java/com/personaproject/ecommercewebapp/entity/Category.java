@@ -5,24 +5,24 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Data
 @Table(name = "category")
 public class Category {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
-    @Column(name = "category_name")
     private @NotBlank String categoryName;
-
-    @Column(name = "description")
-    private @NotBlank String  categoryDescription;
-
-    @Column(name = "image_rl")
+    private @NotBlank String categoryDescription;
     private @NotBlank String categoryImageUrl;
+
+    @OneToMany
+    @PrimaryKeyJoinColumn(name = "productList")
+    private List<Product> productList;
 
     public Category(String categoryName, String categoryDescription, String categoryImageUrl) {
         this.categoryName = categoryName;
@@ -30,5 +30,6 @@ public class Category {
         this.categoryImageUrl = categoryImageUrl;
     }
 
-    public Category() {}
+    public Category() {
+    }
 }

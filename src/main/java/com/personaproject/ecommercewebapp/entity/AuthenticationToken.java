@@ -3,6 +3,7 @@ package com.personaproject.ecommercewebapp.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.context.annotation.Bean;
 
 import java.util.Date;
 import java.util.UUID;
@@ -28,4 +29,5 @@ public class AuthenticationToken {
         this.token = UUID.randomUUID().toString();
         this.user = user;
     }
+
 }
