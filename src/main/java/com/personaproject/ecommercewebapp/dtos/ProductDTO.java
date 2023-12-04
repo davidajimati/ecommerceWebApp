@@ -11,7 +11,6 @@ import lombok.Data;
 public class ProductDTO {
     private @NotEmpty String productName;
     private @NotEmpty String productDescription;
-    private @NotEmpty Long categoryId;
     private @NotEmpty String imageUrl;
     private @NotEmpty Double price;
 }

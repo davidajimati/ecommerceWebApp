@@ -25,17 +25,16 @@ public class ProductService {
     private final CategoryService categoryService;
 
     public ResponseEntity<?> createProduct(ProductDTO productDTO) {
-        categoryService.checkIfCategoryExists(productDTO.getCategoryId());
+//        categoryService.checkIfCategoryExists(productDTO.getCategoryId());
 
-        Product product = new Product(productDTO.getProductName(), productDTO.getProductDescription(), productDTO.getCategoryId(), productDTO.getImageUrl(), productDTO.getPrice());
+        Product product = new Product(productDTO.getProductName(), productDTO.getProductDescription(), productDTO.getImageUrl(), productDTO.getPrice());
         productRepo.save(product);
 
-        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.CREATED, "Product added to category with ID" + productDTO.getCategoryId()), HttpStatus.CREATED);
+        return new ResponseEntity<>(responseServices.apiResponse(HttpStatus.CREATED, "Product added to category with ID"), HttpStatus.CREATED);
     }
 
     private ProductDTO getProductDTO(Product product) {
-        return new ProductDTO(product.getProductName(), product.getProductDescription(),
-                product.getCategoryRefId(), product.getImageUrl(), product.getPrice());
+        return new ProductDTO(product.getProductName(), product.getProductDescription(), product.getImageUrl(), product.getPrice());
     }
 
     public ProductDTO findProductByID(@PathVariable Long productId) {
@@ -64,7 +63,7 @@ public class ProductService {
         checkIfProductExists(productId);
 
         Product product = productRepo.getReferenceById(productId);
-        product.setCategoryRefId(productDTO.getCategoryId());
+//        product.setCategoryRefId(productDTO.getCategoryId());
         product.setProductName(productDTO.getProductName());
         product.setImageUrl(productDTO.getImageUrl());
 

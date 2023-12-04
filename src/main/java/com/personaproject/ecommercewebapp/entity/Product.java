@@ -16,22 +16,18 @@ public class Product {
 
     private @NotNull String productName;
     private @NotNull String productDescription;
-    private @NotNull long categoryRefId;
     private @NotNull String imageUrl;
+    private double price;
 
 
-//    @ManyToOne
-//    @JsonIgnore
-//    @JoinColumn(name = "category_id")
-//    Category category;
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "category_id")
+    Category category;
 
-
-    private Double price;
-
-    public Product(String productName, String productDescription, long categoryRefId, String imageUrl, Double price) {
+    public Product(String productName, String productDescription, String imageUrl, Double price) {
         this.productName = productName;
         this.productDescription = productDescription;
-        this.categoryRefId = categoryRefId;
         this.imageUrl = imageUrl;
         this.price = price;
     }

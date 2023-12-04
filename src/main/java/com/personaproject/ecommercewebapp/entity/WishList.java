@@ -15,20 +15,20 @@ public class WishList {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
 
-    @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
-    @PrimaryKeyJoinColumn(name = "user_id")
+    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(targetEntity = Product.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "product_id")
-    private List<Product> productList;
-
-    @Column(name = "column_id")
     private Date createdDate;
+
+    @ManyToOne(targetEntity = Product.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_id")
+    private Product product;
+
 
     public WishList(User user, Product product) {
         this.user = user;
         this.createdDate = new Date();
-        this.productList.add(product);
+//        this.productList.add(product);
     }
 }

@@ -20,10 +20,6 @@ public class Category {
     private @NotBlank String categoryDescription;
     private @NotBlank String categoryImageUrl;
 
-    @OneToMany
-    @PrimaryKeyJoinColumn(name = "productList")
-    private List<Product> productList;
-
     public Category(String categoryName, String categoryDescription, String categoryImageUrl) {
         this.categoryName = categoryName;
         this.categoryDescription = categoryDescription;
